@@ -1,9 +1,9 @@
 <div id="my-account-settings-container" class="container">
 	<div class="row">
-		<div class="col-md-6">
+		<div class="col-md-12">
 			<div class="panel-body">
 				<div class="row">
-					<div class="col-lg-6">
+					<div class="col-lg-4">
 						<div class="input-group">
 							<input id="username-input" type="text" class="form-control" placeholder="Username">
 							<span class="input-group-btn">
@@ -23,22 +23,49 @@
 				{{#if isLoadingList}}
 					<i class="fa fa-circle-o-notch fa-spin" style="font-size:24px"></i>
 				{{else}}
-					{{#if listRepo}}
-					<div class="form-group">
-						<label for="sel1ect-repo">Select list :</label>
-						<select id="sel1ect-repo" class="form-control" onchange={{action "selectRepo" value="target.value"}}>
-							<option value="" disabled selected>Select a repository</option>
-							{{#each listRepo as |repo|}}
-								<option value={{repo.id}}>{{repo.name}}</option>
-							{{/each}}
-						</select>
+					<div class="row">
+						<div class="col-lg-4">
+							<div class="input-group">
+								<label for="select-privacy">filter privacy :</label>
+								<select id="select-privacy" class="form-control" onchange={{action "changePrivacy" value="target.value"}}>
+									<option value="0" selected>Any</option>
+									<option value="1">Private</option>
+									<option value="2">Public</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="col-lg-4">
+							<div class="input-group">
+								<label for="select-privacy">filter language :</label>
+								<select id="select-language" style="height:100px" class="form-control" multiple onchange={{action "submitUserName"}}>
+									{{#each languagesList as |language|}}
+										<option value={{language}}>{{language}}</option>
+									{{/each}}
+								</select>
+							</div>
+						</div>
+
+						{{#if filteredList}}
+							<div class="col-lg-4">
+								<div class="form-group">
+									<label for="sel1ect-repo">Repository list :</label>
+									<select id="sel1ect-repo" class="form-control" onchange={{action "selectRepo" value="target.value"}}>
+										<option value="" disabled selected>Select a repository</option>
+										{{#each filteredList as |repo|}}
+											<option value={{repo.id}}>{{repo.name}}</option>
+										{{/each}}
+									</select>
+								</div>
+							</div>
+						{{/if}}
 					</div>
 
+					<div class="row">
 						{{#if activeItem}}
 							{{repository-item item=activeItem}}
 						{{/if}}
-
-					{{/if}}
+					</div>
 				{{/if}}
 
 			</div>

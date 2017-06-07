@@ -1,14 +1,37 @@
-<div class="panel panel-primary">
-
+<div class="panel panel-primary repository-container">
 	{{#if isLoading}}
 		<i class="fa fa-circle-o-notch fa-spin" style="font-size:24px"></i>
 	{{else}}
-		<ul>
-			<li>{{item.name}}</li>
-			<li>{{item.html_url}}</li>
-			<li>{{branchesNbr}}</li>
-		</ul>
+		<table class="table table-striped">
+			<tbody>
+				<tr>
+					<th>Name</th>
+					<td>{{item.name}}</td>
+				</tr>
+				<tr>
+					<th>Link</th>
+					<td><a target="_blank" href="{{item.html_url}}">{{item.html_url}}</a></td>
+				</tr>
+				<tr>
+					<th>Number of branch</th>
+					<td>{{branchesNbr}}</td>
+				</tr>
+				<tr>
+					<th>Languages</th>
+					<td>{{languages}}</td>
+				</tr>
+				<tr>
+					<th>privacy</th>
+					<td>
+						{{#if item.private}}
+							private
+						{{else}}
+							public
+						{{/if}}
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	{{/if}}
-	
 </div>
 

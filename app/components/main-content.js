@@ -15,12 +15,14 @@ export default Ember.Component.extend({
 				selectedLanguages = Ember.$('#select-language').val(),
 				username = Ember.$('#username-input').val();
 
+			const defaultName = 'defunkt';
+
 			this.set('isLoading', true);
 			
 			//this is to always look for user if no username has been input
 			if(!username.length){
-				Ember.$('#username-input').val('francoisminette');
-				username = 'francoisminette';
+				Ember.$('#username-input').val(defaultName);
+				username = defaultName;
 			}
 
 			apiUrl += '?q=user:' + username;
@@ -38,7 +40,7 @@ export default Ember.Component.extend({
 				
 				self.set('listRepo', response.items);
 				self.updateFilteredList(Ember.$('#select-privacy').val());
-			}, (response) => {
+			}, () => {
 				self.setProperties({
 					'isLoadingList' : false,
 					'activeItem' : null,
@@ -58,19 +60,17 @@ export default Ember.Component.extend({
 	},
 
 	updateFilteredList : function(value) {
-		var self = this,
-			newList = Ember.$.grep(this.listRepo, 
+		var newList = Ember.$.grep(this.listRepo, 
 			item => {
 				switch(parseInt(value, 10)){
 					case 0:
 						return true;
-					break;
+						break;
 					case 1:
 						return item.private == true;
-					break;
+						break;
 					case 2:
 						return item.private == false;
-					break;
 				}
 			});
 

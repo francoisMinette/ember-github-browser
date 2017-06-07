@@ -1,22 +1,39 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
+	loadingBranch : false,
+	loadingLanguages : false,
+	itemObserver : Ember.observer('item', (self) => {
+		self.updateAttr();
+	}),
+
+	isLoadingItem : function() {
+		return !this || this.get('loadingBranch') || this.get('loadingLanguages');
+	}.property('loadingLanguages', 'loadingBranch'),
+
 	didInsertElement : function(){
 		this.updateAttr();
 	},
 
-	itemObserver : Ember.observer('item', () => {
-		this.updateAttr();
-	}),
-
 	updateAttr : function(){
-		var self = this,
-			tmpArray = [];
-		
+		var tmpArray = [],
+			self = this;
+
+		if(this.get('loadingBranch') || this.get('loadingLanguages')){
+			return;
+		}
+
+		this.setProperties({
+			'loadingBranch': true,
+			'loadingLanguages': true,
+		});
+
 		Ember.$.get(this.item.branches_url.replace('{/branch}', '')).then(data => {
 			self.set('branchesNbr', data.length || 0);
-		}, function(data) {
+			self.set('loadingBranch', false);
+		}, function() {
 			self.set('branchesNbr', 0);
+			self.set('loadingBranch', false);
 		});
 
 		Ember.$.get(this.item.languages_url).then(data => {
@@ -27,6 +44,9 @@ export default Ember.Component.extend({
 			}
 
 			self.set('languages', tmpArray.toString() || 'none');
+			self.set('loadingLanguages', false);
+		}, () => {
+			self.set('loadingLanguages', false);
 		});
 	},
 });

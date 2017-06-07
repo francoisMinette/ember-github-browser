@@ -9,7 +9,7 @@ export default Ember.Component.extend({
 	languagesList : ['JavaScript', 'Ruby', 'D', 'Julia', 'Rust', 'Java', 'Scala', 'Elixir', 'Objective-C', 'C', 'LiveScript', 'Haskell', 'Scheme', 'CoffeeScript', 'Nim', 'Racket', 'Erlang', 'Go', 'Dylan', 'Frege', 'Dart', 'Chapel', 'C#', 'Red', 'C++', 'OCaml', 'Haxe', 'Gosu', 'Crystal', 'TypeScript', 'Factor', 'Perl6', 'Python', 'F#'],
 
 	actions:{
-		submitUserName() {//?q=user:francoisminette+language:javascript
+		submitUserName() {
 			var self = this,
 				apiUrl = config.apiUrl + "/search/repositories",
 				selectedLanguages = Ember.$('#select-language').val(),
@@ -25,64 +25,64 @@ export default Ember.Component.extend({
 
 			apiUrl += '?q=user:' + username;
 
-			for(var i = 0; i < selectedLanguages.length; i++){
+			for(let i = 0; i < selectedLanguages.length; i++){
 				apiUrl += '+language:' + selectedLanguages[i].toLowerCase();
 			}
 
-			Ember.$.get(apiUrl).then(function(response){
-				self.setProperties({
-					'userNotfound' : false,
-					'isLoadingList' : false
-				});
-				console.log('in promise success', response);
+			Ember.$.get(apiUrl).then(response => {
+				self.set('isLoadingList', false);
 				
 				if(!response){
 					return;
 				}
 				
+				self.set('listRepo', response.items);
+				self.updateFilteredList(Ember.$('#select-privacy').val());
+			}, (response) => {
 				self.setProperties({
-					'listRepo' : response.items,
-					'filteredList' : response.items
+					'isLoadingList' : false,
+					'activeItem' : null,
+					'listRepo' : [],
+					'filteredList' : []
 				});
-			}, function(response) {
-				self.setProperties({
-					'userNotfound' : true,
-					'isLoadingList' : false
-				});
-				
 			});
 		},
 
 		selectRepo(value) {
-			this.set('activeItem', null);
-			var selectedRepo = Ember.$.grep(this.listRepo, function(item){return item.id == value;})[0];
-			console.log('in selectRepo', value, selectedRepo);
-			this.set('activeItem', selectedRepo);
+			this.set('activeItem', Ember.$.grep(this.listRepo, item => {return item.id == value;})[0]);
 		},
 
 		changePrivacy(value) {
-			var self = this,
-				newList = Ember.$.grep(this.listRepo, 
-				function(item){
-					switch(parseInt(value, 10)){
-						case 0:
-							return true;
-						break;
-						case 1:
-							return item.private == true;
-						break;
-						case 2:
-							return item.private == false;
-						break;
-					}
-				});
-
-			console.log('in changePrivacy', value, newList);
-			this.set('filteredList', newList);
-
-			if(this.activeItem && !Ember.$.grep(newList, function(item){return item.id == self.activeItem.id}).length){
-				this.set('activeItem', null);
-			}
-		}
+			this.updateFilteredList(value);
+		},
 	},
+
+	updateFilteredList : function(value) {
+		var self = this,
+			newList = Ember.$.grep(this.listRepo, 
+			item => {
+				switch(parseInt(value, 10)){
+					case 0:
+						return true;
+					break;
+					case 1:
+						return item.private == true;
+					break;
+					case 2:
+						return item.private == false;
+					break;
+				}
+			});
+
+		this.set('filteredList', newList);
+		this.removeCurrentItem();
+	},
+
+	removeCurrentItem : function(){
+		var self = this;
+
+		if(this.activeItem && !Ember.$.grep(this.filteredList, item => {return item.id == self.activeItem.id}).length){
+			this.set('activeItem', null);
+		}
+	}
 });

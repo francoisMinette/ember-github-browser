@@ -1,11 +1,11 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-	didInsertElement(){console.log('in didInsertElement item');
+	didInsertElement : function(){
 		this.updateAttr();
 	},
 
-	itemObserver : Ember.observer('item', function(){console.log('in observer item');
+	itemObserver : Ember.observer('item', () => {
 		this.updateAttr();
 	}),
 
@@ -13,22 +13,20 @@ export default Ember.Component.extend({
 		var self = this,
 			tmpArray = [];
 		
-		Ember.$.get(this.item.branches_url.replace('{/branch}', '')).then(function(data){
-			console.log('in promise success', data);
+		Ember.$.get(this.item.branches_url.replace('{/branch}', '')).then(data => {
 			self.set('branchesNbr', data.length || 0);
 		}, function(data) {
 			self.set('branchesNbr', 0);
 		});
 
-		Ember.$.get(this.item.languages_url).then(function(data){
-			for (var property in data) {
+		Ember.$.get(this.item.languages_url).then(data => {
+			for (let property in data) {
 				if (data.hasOwnProperty(property)) {
 					tmpArray.push(property);
 				}
 			}
 
 			self.set('languages', tmpArray.toString() || 'none');
-			console.log('set languages', self.languages);
 		});
 	},
 });

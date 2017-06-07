@@ -1,0 +1,47 @@
+<div id="my-account-settings-container" class="container">
+	<div class="row">
+		<div class="col-md-6">
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-6">
+						<div class="input-group">
+							<input id="username-input" type="text" class="form-control" placeholder="Username">
+							<span class="input-group-btn">
+								<button class="btn btn-default" {{action "submitUserName"}} type="button">Find</button>
+							</span>
+						</div>
+					</div>
+				</div>
+
+				{{#if userNotfound}}
+					<div class="row">User not found. Please retry with a different name</div>
+				{{/if}}
+			</div>
+
+			<div class="panel-body list-repo">
+				
+				{{#if isLoadingList}}
+					<i class="fa fa-circle-o-notch fa-spin" style="font-size:24px"></i>
+				{{else}}
+					{{#if listRepo}}
+					<div class="form-group">
+						<label for="sel1ect-repo">Select list :</label>
+						<select id="sel1ect-repo" class="form-control" onchange={{action "selectRepo" value="target.value"}}>
+							<option value="" disabled selected>Select a repository</option>
+							{{#each listRepo as |repo|}}
+								<option value={{repo.id}}>{{repo.name}}</option>
+							{{/each}}
+						</select>
+					</div>
+
+						{{#if activeItem}}
+							{{repository-item item=activeItem}}
+						{{/if}}
+
+					{{/if}}
+				{{/if}}
+
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,14 @@
+<div class="panel panel-primary">
+
+	{{#if isLoading}}
+		<i class="fa fa-circle-o-notch fa-spin" style="font-size:24px"></i>
+	{{else}}
+		<ul>
+			<li>{{item.name}}</li>
+			<li>{{item.html_url}}</li>
+			<li>{{branchesNbr}}</li>
+		</ul>
+	{{/if}}
+	
+</div>
+

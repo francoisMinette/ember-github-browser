@@ -3,19 +3,24 @@ import Ember from 'ember';
 export default Ember.Component.extend({
 	loadingBranch : false,
 	loadingLanguages : false,
+
+	//This is an observer attribute, that will listen on item and be triggered when it is changed
 	itemObserver : Ember.observer('item', (self) => {
 		self.updateAttr();
 	}),
 
-	isLoadingItem : function() {
+	//It is listening on the loadingLanguages and loadingBranch and return a boolean to indicate ifany of the attribute is still being loaded
+	isLoadingItem : function(){
 		return !this || this.get('loadingBranch') || this.get('loadingLanguages');
 	}.property('loadingLanguages', 'loadingBranch'),
 
-	didInsertElement : function(){
+	//Is right after all the element are inserted in the DOM
+	didInsertElement(){
 		this.updateAttr();
 	},
 
-	updateAttr : function(){
+	//Function that will be called to get and set the branchNbr and languages attributes.
+	updateAttr(){
 		var tmpArray = [],
 			self = this;
 
@@ -29,11 +34,15 @@ export default Ember.Component.extend({
 		});
 
 		Ember.$.get(this.item.branches_url.replace('{/branch}', '')).then(data => {
-			self.set('branchesNbr', data.length || 0);
-			self.set('loadingBranch', false);
+			self.setProperties({
+				'branchesNbr' : data.length,
+				'loadingBranch' : false
+			});
 		}, function() {
-			self.set('branchesNbr', 0);
-			self.set('loadingBranch', false);
+			self.setProperties({
+				'branchesNbr' : 0,
+				'loadingBranch' : false
+			});
 		});
 
 		Ember.$.get(this.item.languages_url).then(data => {
@@ -43,8 +52,10 @@ export default Ember.Component.extend({
 				}
 			}
 
-			self.set('languages', tmpArray.toString() || 'none');
-			self.set('loadingLanguages', false);
+			self.setProperties({
+				'languages' : tmpArray.toString() || 'none',
+				'loadingLanguages' : false
+			});
 		}, () => {
 			self.set('loadingLanguages', false);
 		});

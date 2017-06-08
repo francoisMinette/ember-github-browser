@@ -8,58 +8,96 @@ export default Ember.Component.extend({
 	isLoadingList : false,
 	languagesList : ['JavaScript', 'Ruby', 'D', 'Julia', 'Rust', 'Java', 'Scala', 'Elixir', 'Objective-C', 'C', 'LiveScript', 'Haskell', 'Scheme', 'CoffeeScript', 'Nim', 'Racket', 'Erlang', 'Go', 'Dylan', 'Frege', 'Dart', 'Chapel', 'C#', 'Red', 'C++', 'OCaml', 'Haxe', 'Gosu', 'Crystal', 'TypeScript', 'Factor', 'Perl6', 'Python', 'F#'],
 
+	//actions for the different input (organization name & username inputs, language & repo & privacy selects)
 	actions:{
-		submitUserName() {
-			var self = this,
-				apiUrl = config.apiUrl + "/search/repositories",
-				selectedLanguages = Ember.$('#select-language').val(),
-				username = Ember.$('#username-input').val();
+		submitOrganizationName(){
+			var username = Ember.$('#organization-name-input').val();
+			const defaultName = 'github';
 
+			Ember.$('#username-input').val('');
+
+			//this is to always look for user if no input value has been input
+			if(!username.length){
+				Ember.$('#organization-name-input').val(defaultName);
+				username = defaultName;
+			}
+
+			this.getRepoList(username);
+		},
+
+		submitUserName(){
+			var username = Ember.$('#username-input').val();
 			const defaultName = 'defunkt';
 
-			this.set('isLoading', true);
-			
-			//this is to always look for user if no username has been input
+			Ember.$('#organization-name-input').val('');
+
+			//this is to always look for user if no input value has been input
 			if(!username.length){
 				Ember.$('#username-input').val(defaultName);
 				username = defaultName;
 			}
 
-			apiUrl += '?q=user:' + username;
-
-			for(let i = 0; i < selectedLanguages.length; i++){
-				apiUrl += '+language:' + selectedLanguages[i].toLowerCase();
-			}
-
-			Ember.$.get(apiUrl).then(response => {
-				self.set('isLoadingList', false);
-				
-				if(!response){
-					return;
-				}
-				
-				self.set('listRepo', response.items);
-				self.updateFilteredList(Ember.$('#select-privacy').val());
-			}, () => {
-				self.setProperties({
-					'isLoadingList' : false,
-					'activeItem' : null,
-					'listRepo' : [],
-					'filteredList' : []
-				});
-			});
+			this.getRepoList(username);
 		},
 
-		selectRepo(value) {
+		selectLanguage(){
+			if(Ember.$('#organization-name-input').val().length){
+				this.triggerAction({
+					action:'submitOrganizationName',
+					target: this
+				});
+			}else if(Ember.$('#username-input').val().length){
+				this.triggerAction({
+					action:'submitUserName',
+					target: this
+				});
+			}
+		},
+
+		selectRepo(value){
 			this.set('activeItem', Ember.$.grep(this.listRepo, item => {return item.id == value;})[0]);
 		},
 
-		changePrivacy(value) {
+		changePrivacy(value){
 			this.updateFilteredList(value);
 		},
 	},
 
-	updateFilteredList : function(value) {
+	//Function used to get and set the list of repositories
+	getRepoList(username){
+		var self = this,
+			apiUrl = config.apiUrl + "/search/repositories",
+			selectedLanguages = Ember.$('#select-language').val();
+
+		this.set('isLoading', true);
+
+		apiUrl += '?q=user:' + username;
+
+		for(let i = 0; i < selectedLanguages.length; i++){
+			apiUrl += '+language:' + selectedLanguages[i].toLowerCase();
+		}
+
+		Ember.$.get(apiUrl).then(response => {
+			self.set('isLoadingList', false);
+			
+			if(!response){
+				return;
+			}
+			
+			self.set('listRepo', response.items);
+			self.updateFilteredList(Ember.$('#select-privacy').val());
+		}, () => {
+			self.setProperties({
+				'isLoadingList' : false,
+				'activeItem' : null,
+				'listRepo' : [],
+				'filteredList' : []
+			});
+		});
+	},
+
+	//Function that will update the filtered list
+	updateFilteredList(value){
 		var newList = Ember.$.grep(this.listRepo, 
 			item => {
 				switch(parseInt(value, 10)){
@@ -78,7 +116,8 @@ export default Ember.Component.extend({
 		this.removeCurrentItem();
 	},
 
-	removeCurrentItem : function(){
+	//Function that will remove the current repository item if it does not belong to the filtered repo list
+	removeCurrentItem(){
 		var self = this;
 
 		if(this.activeItem && !Ember.$.grep(this.filteredList, item => {return item.id == self.activeItem.id}).length){

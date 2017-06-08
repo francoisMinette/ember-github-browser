@@ -11,6 +11,14 @@
 							</span>
 						</div>
 					</div>
+					<div class="col-lg-4">
+						<div class="input-group">
+							<input id="organization-name-input" type="text" class="form-control" placeholder="Organization name">
+							<span class="input-group-btn">
+								<button class="btn btn-default" {{action "submitOrganizationName"}} type="button">Find</button>
+							</span>
+						</div>
+					</div>
 				</div>
 			</div>
 
@@ -34,7 +42,7 @@
 						<div class="col-lg-4">
 							<div class="input-group">
 								<label for="select-privacy">filter language :</label>
-								<select id="select-language" style="height:100px" class="form-control" multiple onchange={{action "submitUserName"}}>
+								<select id="select-language" style="height:100px" class="form-control" multiple onchange={{action "selectLanguage"}}>
 									{{#each languagesList as |language|}}
 										<option value={{language}}>{{language}}</option>
 									{{/each}}
@@ -45,8 +53,8 @@
 						{{#if filteredList}}
 							<div class="col-lg-4">
 								<div class="form-group">
-									<label for="sel1ect-repo">Repository list :</label>
-									<select id="sel1ect-repo" class="form-control" onchange={{action "selectRepo" value="target.value"}}>
+									<label for="select-repo">Repository list :</label>
+									<select id="select-repo" class="form-control" onchange={{action "selectRepo" value="target.value"}}>
 										<option value="" disabled selected>Select a repository</option>
 										{{#each filteredList as |repo|}}
 											<option value={{repo.id}}>{{repo.name}}</option>

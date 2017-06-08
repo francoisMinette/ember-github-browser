@@ -24,7 +24,7 @@ export default Ember.Component.extend({
 		var tmpArray = [],
 			self = this;
 
-		if(this.get('loadingBranch') || this.get('loadingLanguages')){
+		if(this.get('loadingBranch') || this.get('loadingLanguages') || !this.item || this.item === undefined){
 			return;
 		}
 

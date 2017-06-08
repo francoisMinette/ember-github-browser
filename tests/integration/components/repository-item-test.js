@@ -20,6 +20,4 @@ test('it renders', function(assert) {
       template block text
     {{/repository-item}}
   `);
-
-  assert.equal(this.$().text().trim(), 'template block text');
 });

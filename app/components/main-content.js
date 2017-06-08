@@ -103,10 +103,8 @@ export default Ember.Component.extend({
 				switch(parseInt(value, 10)){
 					case 0:
 						return true;
-						break;
 					case 1:
 						return item.private == true;
-						break;
 					case 2:
 						return item.private == false;
 				}

@@ -1,7 +1,8 @@
 # ember-github-browser
 
-This README outlines the details of collaborating on this Ember application.
-A short introduction of this app could easily go here.
+This app gives the user the ability to browse user and organization repository list throught a basic UI.
+It also provides few details on each of them such as name / amount of branches / link / privacy / languages.
+The user can also use few filters like privacy or languages.
 
 ## Prerequisites
 
@@ -18,14 +19,18 @@ You will need the following things properly installed on your computer.
 * `cd ember-github-browser`
 * `npm install`
 
+## Supported browsers
+
+all recent versions of : 
+* Safari
+* Chrome
+* Firefox
+* Edge
+
 ## Running / Development
 
 * `ember serve`
 * Visit your app at [http://localhost:4200](http://localhost:4200).
-
-### Code Generators
-
-Make use of the many generators for code, try `ember help generate` for more details
 
 ### Running Tests
 
@@ -36,10 +41,6 @@ Make use of the many generators for code, try `ember help generate` for more det
 
 * `ember build` (development)
 * `ember build --environment production` (production)
-
-### Deploying
-
-Specify what it takes to deploy your app.
 
 ## Further Reading / Useful Links
 
